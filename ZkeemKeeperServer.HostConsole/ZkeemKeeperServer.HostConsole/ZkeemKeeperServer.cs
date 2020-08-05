@@ -180,14 +180,14 @@ namespace ZkeemKeeperServer.HostConsole
 
             var cmdstring = "OK";
 
-            return new ResponseData { DataInByte = Encoding.UTF8.GetBytes(cmdstring) };
+            return new ResponseData { DataInByte = Encoding.UTF8.GetBytes(cmdstring)  , Body= cmdstring};
         }
 
         private ResponseData Iclock_devicecmd(RequestData arg)
         {
             var cmdstring = "OK";
 
-            return new ResponseData { DataInByte = Encoding.UTF8.GetBytes(cmdstring) };
+            return new ResponseData { DataInByte = Encoding.UTF8.GetBytes(cmdstring) , Body= cmdstring};
         }
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace ZkeemKeeperServer.HostConsole
                 cmdstring = "OK";
             }
 
-            return new ResponseData { DataInByte = Encoding.UTF8.GetBytes(cmdstring) };
+            return new ResponseData { DataInByte = Encoding.UTF8.GetBytes(cmdstring), Body= cmdstring };
         }
 
         private ResponseData Iclock_getrequest_get(RequestData arg)
@@ -271,14 +271,17 @@ namespace ZkeemKeeperServer.HostConsole
 
         private ResponseData Iclock_cdata(RequestData arg)
         {
+            ResponseData rd;
             if (arg.HttpMethod.Equals("get", StringComparison.OrdinalIgnoreCase))
             {
-                return Iclock_cdata_get(arg);
+                rd= Iclock_cdata_get(arg);
             }
             else
             {
-                return Iclock_cdata_post(arg);
+                rd= Iclock_cdata_post(arg);
             }
+
+            return rd;
         }
 
         private ResponseData Iclock_cdata_get(RequestData arg)
@@ -395,7 +398,8 @@ namespace ZkeemKeeperServer.HostConsole
 
             return new ResponseData
             {
-                DataInByte = Encoding.UTF8.GetBytes("OK")
+                DataInByte = Encoding.UTF8.GetBytes("OK"),
+                Body="OK"
             };
         }
         #endregion
@@ -625,7 +629,7 @@ namespace ZkeemKeeperServer.HostConsole
 
             Byte[] bSendData = Encoding.UTF8.GetBytes(sBuffer);
 
-            Logger.Info("SendResponseHeader:" + sBuffer);
+            Logger.Info("SendResponseHeader:\n" + sBuffer);
 
             SendToClientSocket(ref remoteSocket, bSendData);
         }
@@ -1041,6 +1045,8 @@ namespace ZkeemKeeperServer.HostConsole
 
         public static void Info(string msg, Exception ex = null)
         {
+            Console.WriteLine(msg);
+            return;
             try
             {
                 _logQueue.Enqueue(new LogInfo()
