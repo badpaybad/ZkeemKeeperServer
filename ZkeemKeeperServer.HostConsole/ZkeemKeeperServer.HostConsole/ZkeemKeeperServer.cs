@@ -329,6 +329,7 @@ namespace ZkeemKeeperServer.HostConsole
 
             return new ResponseData
             {
+                Body= optionConfig,
                 DataInByte = bOption
             };
         }
