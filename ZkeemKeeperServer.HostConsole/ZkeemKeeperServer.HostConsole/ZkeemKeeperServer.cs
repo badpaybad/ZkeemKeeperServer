@@ -557,9 +557,12 @@ namespace ZkeemKeeperServer.HostConsole
 
         public void SendResponse(ref Socket remoteSocket, ResponseData responseData, RequestData requestData)
         {
+            Logger.Info(requestData.HttpMethod+ ":Url: " + requestData.RequestUrl + " "+ requestData.DeviceSN);
+
             SendResponseHeader(ref remoteSocket, responseData, requestData);
             SendToClientSocket(ref remoteSocket, responseData.DataInByte);
-            //Logger.Info(responseData.Body);
+
+            Logger.Info("Body: "+  responseData.Body);
         }
 
         void SendResponseHeader(ref Socket remoteSocket, ResponseData responseData, RequestData requestData, string contentType = "text/plain", string statusCode = "200 OK")
@@ -621,7 +624,7 @@ namespace ZkeemKeeperServer.HostConsole
 
             Byte[] bSendData = Encoding.UTF8.GetBytes(sBuffer);
 
-            //Logger.Info(sBuffer);
+            Logger.Info("SendResponseHeader:" + sBuffer);
 
             SendToClientSocket(ref remoteSocket, bSendData);
         }
