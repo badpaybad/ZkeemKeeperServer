@@ -26,25 +26,21 @@ namespace ZkeemKeeperServer.HostConsole
         }
 
         private static void Server_OnClientAttendance(RequestData arg1, System.Collections.Generic.List<AttLogInfo> arg2)
-        {
-            //Console.WriteLine(JsonConvert.SerializeObject(arg2));
+        {           
+            var redisHost = ConfigurationManager.AppSettings["ATTENDANCE_RedisHost"];
+            var redisPort = int.Parse(ConfigurationManager.AppSettings["ATTENDANCE_RedisPort"]);
+            var redisPwd = ConfigurationManager.AppSettings["ATTENDANCE_RedisPwd"];
+            var redisNotiDb = int.Parse(ConfigurationManager.AppSettings["ATTENDANCE_RedisDb"]);
 
-            //var redisHost = ConfigurationManager.AppSettings["ATTENDANCE_RedisHost"];
-            //var redisPort = int.Parse(ConfigurationManager.AppSettings["ATTENDANCE_RedisPort"]);
-            //var redisPwd = ConfigurationManager.AppSettings["ATTENDANCE_RedisPwd"];
-            //var redisNotiDb = int.Parse(ConfigurationManager.AppSettings["ATTENDANCE_RedisDb"]);
+            string queueName = ConfigurationManager.AppSettings["ATTENDANCE_RedisQueue"];
+            RedisServices redis = new RedisServices().Init(redisHost, redisPort, redisPwd, redisNotiDb);
 
-            //string queueName = ConfigurationManager.AppSettings["ATTENDANCE_RedisQueue"];
-            //RedisServices redis = new RedisServices().Init(redisHost, redisPort, redisPwd, redisNotiDb);
-
-            //redis.TryEnqueue(queueName, JsonConvert.SerializeObject(new
-            //{
-            //    request= arg1,
-            //    received=arg2
-            //}));
-        }
-
-       
+            redis.TryEnqueue(queueName, JsonConvert.SerializeObject(new
+            {
+                request = arg1,
+                data = arg2
+            }));
+        }      
 
     }
 }
