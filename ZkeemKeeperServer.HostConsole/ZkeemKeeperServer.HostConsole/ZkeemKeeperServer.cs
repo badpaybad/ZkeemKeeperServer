@@ -76,7 +76,7 @@ namespace ZkeemKeeperServer.HostConsole
                 {
                     while (!_isDispose)
                     {
-                        ListenerData();
+                        TcpListenerData();
                     }
                 }));
             }
@@ -461,7 +461,7 @@ namespace ZkeemKeeperServer.HostConsole
         //    ShowInfo();
         //}
 
-        private void ListenerData()
+        private void TcpListenerData()
         {
             try
             {
@@ -501,8 +501,10 @@ namespace ZkeemKeeperServer.HostConsole
                             {
                                 OnClientRequest(request);
                             }
+                            
+                            var tempRequest = Encoding.UTF8.GetString(requestData);
 
-                            Logger.Info(request.RawData);
+                            Logger.Info("RequestRaw: "+ tempRequest);
 
                             _deviceSn.GetOrAdd(request.DeviceSN.ToLower(), request.DeviceSN);
                             _deviceCommands.GetOrAdd(request.DeviceSN.ToLower(), new ConcurrentQueue<string>());
@@ -562,15 +564,15 @@ namespace ZkeemKeeperServer.HostConsole
 
         public void SendResponse(ref Socket remoteSocket, ResponseData responseData, RequestData requestData)
         {
-            Logger.Info(requestData.HttpMethod+ ":Url: " + requestData.RequestUrl + " "+ requestData.DeviceSN);
-
-            SendResponseHeader(ref remoteSocket, responseData, requestData);
+       
+           var header= SendResponseHeader(ref remoteSocket, responseData, requestData);
             SendToClientSocket(ref remoteSocket, responseData.DataInByte);
 
-            Logger.Info("Body: "+  responseData.Body);
+            Logger.Info("ResponseHeader: " + header);
+            Logger.Info("ResponseBody: "+  responseData.Body);
         }
 
-        void SendResponseHeader(ref Socket remoteSocket, ResponseData responseData, RequestData requestData, string contentType = "text/plain", string statusCode = "200 OK")
+        string SendResponseHeader(ref Socket remoteSocket, ResponseData responseData, RequestData requestData, string contentType = "text/plain", string statusCode = "200 OK")
         {
             string sBuffer = null;
             var contentLength = responseData.DataInByte.Length;
@@ -632,6 +634,8 @@ namespace ZkeemKeeperServer.HostConsole
             Logger.Info("SendResponseHeader:\n" + sBuffer);
 
             SendToClientSocket(ref remoteSocket, bSendData);
+
+            return sBuffer;
         }
         void SendToClientSocket(ref Socket remoteSocket, Byte[] dataToSend)
         {
