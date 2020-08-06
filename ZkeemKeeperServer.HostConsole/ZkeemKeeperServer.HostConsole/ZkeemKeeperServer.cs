@@ -631,8 +631,6 @@ namespace ZkeemKeeperServer.HostConsole
 
             Byte[] bSendData = Encoding.UTF8.GetBytes(sBuffer);
 
-            Logger.Info("SendResponseHeader:\n" + sBuffer);
-
             SendToClientSocket(ref remoteSocket, bSendData);
 
             return sBuffer;
